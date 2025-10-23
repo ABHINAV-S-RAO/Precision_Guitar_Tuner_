@@ -2,7 +2,7 @@
 # 🎸 STM32 Guitar Tuner (FFT-Based)
 
 An **embedded guitar tuner** project built using **STM32F446xx**, **ADC sampling**, and **CMSIS-DSP FFT** to detect guitar string frequencies in real time.  
-It samples analog audio from a microphone or pickup, performs a **Fast Fourier Transform (FFT)** to find the fundamental frequency, and displays the **closest note** and tuning direction on an **LCD**.
+It samples analog electric signals from a guitar (using an Analog Front-End), performs a **Fast Fourier Transform (FFT)** to find the fundamental frequency, and displays the **closest note** and tuning direction on an **LCD**.
 
 ---
 
@@ -83,7 +83,6 @@ It samples analog audio from a microphone or pickup, performs a **Fast Fourier T
    ```c
    windowed_buffer[i] = adc_buffer[i] * (0.5f - 0.5f * cosf(2 * PI * i / (BUFFER_SIZE - 1)));
 
-
 2. **Perform FFT**
    arm_rfft_fast_init_f32(&fft_inst, BUFFER_SIZE);
    arm_rfft_fast_f32(&fft_inst, windowed_buffer, fft_real, 0);
@@ -98,7 +97,7 @@ It samples analog audio from a microphone or pickup, performs a **Fast Fourier T
 5. **Compare with Guitar Notes:**
    Finds the closest frequency and determines if the string is HIGH, LOW, or IN TUNE.
 
-
+---
 
 ## 🧰 Development Setup
 **🪛 Requirements**
@@ -111,20 +110,23 @@ It samples analog audio from a microphone or pickup, performs a **Fast Fourier T
 6. Guitar(electric) (0-3.3 V signal range)
 7. Analog Front end circuit consisting of a 4th order Butterworth LPF, and a Level shifter circuit to obtain 0V-3.3V operation.
 
-
+---
 
 ## **⚡ How It Works**
 
---> On button press (PC13), an EXTI interrupt sets a flag.
---> The main loop starts ADC sampling (Timer2-triggered or software).
---> 1024 samples are collected at 8 kHz rate.
---> FFT is applied to determine the dominant frequency.
---> The closest note and tuning status are shown on the LCD.
+- On button press (PC13), an EXTI interrupt sets a flag.
+- The main loop starts ADC sampling (Timer2-triggered or software).
+- 1024 samples are collected at 8 kHz rate.
+- FFT is applied to determine the dominant frequency.
+- The closest note and tuning status are shown on the LCD.
 
+---
 
 ## **📟 Example LCD Output**
 *Note: A2  F:110Hz*
 *Diff:+0.4Hz HIGH*
+
+---
 
 ## **🧪 Debug Mode (Software Test)**
 
@@ -133,6 +135,8 @@ You can test the FFT without hardware by generating a sine wave:
 *fill_adc_buffer_with_sine(246.94f, 0.5f, 8000.0f); // Simulate B3*
 *process_buffer();*
 
+---
+
 ## **🔧 Future Improvements**
 
 - Add DMA-based ADC sampling
@@ -140,6 +144,7 @@ You can test the FFT without hardware by generating a sine wave:
 - Show real-time frequency bar or needle
 - Support for other instruments
 
+---
 
 Developed with ❤️ using STM32F446, CMSIS-DSP, and HD44780 LCD.
 Ideal for learning DSP, ADC sampling, and signal processing on microcontrollers.
