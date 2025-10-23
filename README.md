@@ -40,7 +40,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 | Component | Description | Pin Connections |
 |------------|--------------|-----------------|
 | **STM32F446xx** | Main MCU | — |
-| **Electret Mic Module / Audio Pickup** | Analog input signal | **PA0 (ADC Channel 0)** |
+| **Electret Guitar Jack** | Analog electric input signal | **PA0 (ADC Channel 0)** |
 | **LCD (16x2 HD44780)** | Note & frequency display | Controlled via `lcd.h` driver |
 | **Push Button** | Start sampling trigger | **PC13 (EXTI line)** |
 | **Onboard LED** | Sampling indicator | **PA5** |
