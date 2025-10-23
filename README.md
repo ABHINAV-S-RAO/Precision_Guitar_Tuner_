@@ -1,26 +1,26 @@
 # Precision_Guitar_Tuner
-# 🎸 STM32 Guitar Tuner (FFT-Based)
+#  STM32 Guitar Tuner (FFT-Based)
 
 An **embedded guitar tuner** project built using **STM32F446xx**, **ADC sampling**, and **CMSIS-DSP FFT** to detect guitar string frequencies in real time.  
 It samples analog electric signals from a guitar (using an Analog Front-End), performs a **Fast Fourier Transform (FFT)** to find the fundamental frequency, and displays the **closest note** and tuning direction on an **LCD**.
 
 ---
 
-## 🚀 Features
+##  Features
 
-✅ Real-time audio sampling using **ADC + Timer Trigger**  
-✅ **Hanning Windowing** for smooth FFT performance  
-✅ Frequency detection using **CMSIS DSP’s `arm_rfft_fast_f32()`**  
-✅ LCD Display shows:
+- Real-time audio sampling using **ADC + Timer Trigger**  
+- **Hanning Windowing** for smooth FFT performance  
+- Frequency detection using **CMSIS DSP’s `arm_rfft_fast_f32()`**  
+- LCD Display shows:
 - Detected frequency  
 - Closest standard guitar note  
 - Whether the string is **High / Low / In Tune**  
-✅ User button (PC13) starts each measurement  
-✅ Optional **test sine-wave generator** for simulation (no hardware required)
+- User button (PC13) starts each measurement  
+- Optional **test sine-wave generator** for simulation (no hardware required)
 
 ---
 
-## 🧠 System Overview
+##  System Overview
 [Electric Guitar Jack]
 │
 ▼
@@ -35,7 +35,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## ⚙️ Hardware Setup
+##  Hardware Setup
 
 | Component | Description | Pin Connections |
 |------------|--------------|-----------------|
@@ -49,7 +49,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## 🧩 Software Modules
+##  Software Modules
 
 | Function | Description |
 |-----------|-------------|
@@ -63,7 +63,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## 🎵 Guitar Notes Reference (Standard Tuning)
+##  Guitar Notes Reference (Standard Tuning)
 
 | String | Note | Frequency (Hz) |
 |---------|------|----------------|
@@ -76,7 +76,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## 🔍 FFT Processing Logic
+##  FFT Processing Logic
 
 1. **Apply Hanning Window:**  
    Smooths discontinuities at the edges of the sample buffer.
@@ -99,8 +99,8 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## 🧰 Development Setup
-**🪛 Requirements**
+##  Development Setup
+** Requirements**
 
 1. STM32F446xx board (e.g., Nucleo-F446RE)
 2. STM32CubeIDE or Keil uVision
@@ -112,7 +112,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## **⚡ How It Works**
+## ** How It Works**
 
 - On button press (PC13), an EXTI interrupt sets a flag.
 - The main loop starts ADC sampling (Timer2-triggered or software).
@@ -122,13 +122,13 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## **📟 Example LCD Output**
+## ** Example LCD Output**
 *Note: A2  F:110Hz*
 *Diff:+0.4Hz HIGH*
 
 ---
 
-## **🧪 Debug Mode (Software Test)**
+## ** Debug Mode (Software Test)**
 
 You can test the FFT without hardware by generating a sine wave:
 
@@ -137,7 +137,7 @@ You can test the FFT without hardware by generating a sine wave:
 
 ---
 
-## **🔧 Future Improvements**
+## ** Future Improvements**
 
 - Add DMA-based ADC sampling
 - Implement auto-gain / signal detection
@@ -146,5 +146,5 @@ You can test the FFT without hardware by generating a sine wave:
 
 ---
 
-Developed with ❤️ using STM32F446, CMSIS-DSP, and HD44780 LCD.
+Developed using STM32F446, CMSIS-DSP, and HD44780 LCD.
 Ideal for learning DSP, ADC sampling, and signal processing on microcontrollers.
