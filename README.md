@@ -119,7 +119,7 @@ Analog Front end circuit consisting of a 4th order Butterworth LPF, and a Level 
 
 
 
-**⚡ How It Works**
+##**⚡ How It Works**
 
 On button press (PC13), an EXTI interrupt sets a flag.
 
@@ -132,18 +132,18 @@ FFT is applied to determine the dominant frequency.
 The closest note and tuning status are shown on the LCD.
 
 
-**📟 Example LCD Output**
+## **📟 Example LCD Output**
 Note: A2  F:110Hz
 Diff:+0.4Hz HIGH
 
-**🧪 Debug Mode (Software Test)**
+## **🧪 Debug Mode (Software Test)**
 
 You can test the FFT without hardware by generating a sine wave:
 
 *fill_adc_buffer_with_sine(246.94f, 0.5f, 8000.0f); // Simulate B3*
 *process_buffer();*
 
-**🔧 Future Improvements**
+## **🔧 Future Improvements**
 
 -Add DMA-based ADC sampling
 -Implement auto-gain / signal detection
