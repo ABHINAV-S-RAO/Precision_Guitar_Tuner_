@@ -103,33 +103,23 @@ It samples analog audio from a microphone or pickup, performs a **Fast Fourier T
 ## 🧰 Development Setup
 **🪛 Requirements**
 
-STM32F446xx board (e.g., Nucleo-F446RE)
-
-STM32CubeIDE or Keil uVision
-
-CMSIS-DSP library (included with STM32CubeIDE)
-
-LCD library (lcd.h, lcd.c)
-
-arm_math.h (from CMSIS-DSP)
-
-Guitar(electric) (0-3.3 V signal range)
-
-Analog Front end circuit consisting of a 4th order Butterworth LPF, and a Level shifter circuit to obtain 0V-3.3V operation.
+1. STM32F446xx board (e.g., Nucleo-F446RE)
+2. STM32CubeIDE or Keil uVision
+3. CMSIS-DSP library (included with STM32CubeIDE)
+4. LCD and GPIO drivers(built my own lcd & gpio drivers from scratch)(lcd.h, lcd.c)
+5. arm_math.h (from CMSIS-DSP)
+6. 6.Guitar(electric) (0-3.3 V signal range)
+7.Analog Front end circuit consisting of a 4th order Butterworth LPF, and a Level shifter circuit to obtain 0V-3.3V operation.
 
 
 
-##**⚡ How It Works**
+## **⚡ How It Works**
 
-On button press (PC13), an EXTI interrupt sets a flag.
-
-The main loop starts ADC sampling (Timer2-triggered or software).
-
-1024 samples are collected at 8 kHz rate.
-
-FFT is applied to determine the dominant frequency.
-
-The closest note and tuning status are shown on the LCD.
+-->On button press (PC13), an EXTI interrupt sets a flag.
+-->The main loop starts ADC sampling (Timer2-triggered or software).
+-->1024 samples are collected at 8 kHz rate.
+-->FFT is applied to determine the dominant frequency.
+-->The closest note and tuning status are shown on the LCD.
 
 
 ## **📟 Example LCD Output**
