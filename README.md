@@ -100,7 +100,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 ---
 
 ##  Development Setup
-** Requirements**
+**Requirements**
 
 1. STM32F446xx board (e.g., Nucleo-F446RE)
 2. STM32CubeIDE or Keil uVision
@@ -112,7 +112,7 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## ** How It Works**
+## **How It Works**
 
 - On button press (PC13), an EXTI interrupt sets a flag.
 - The main loop starts ADC sampling (Timer2-triggered or software).
@@ -122,13 +122,13 @@ It samples analog electric signals from a guitar (using an Analog Front-End), pe
 
 ---
 
-## ** Example LCD Output**
+## **Example LCD Output**
 *Note: A2  F:110Hz*
 *Diff:+0.4Hz HIGH*
 
 ---
 
-## ** Debug Mode (Software Test)**
+## **Debug Mode (Software Test)**
 
 You can test the FFT without hardware by generating a sine wave:
 
@@ -137,7 +137,7 @@ You can test the FFT without hardware by generating a sine wave:
 
 ---
 
-## ** Future Improvements**
+## **Future Improvements**
 
 - Add DMA-based ADC sampling
 - Implement auto-gain / signal detection
