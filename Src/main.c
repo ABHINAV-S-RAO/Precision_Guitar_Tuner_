@@ -294,19 +294,25 @@ void process_buffer(void)
 	float detected_freq=(float)peak_index*((float)SAMPLING_RATE/(float)BUFFER_SIZE);
 
 	//Compare with known string frequencies
-
+	float min_diff =16ef;
+	int closest =0;
+	float closest_harmonic=0;
 	float min_diff=fabsf(detected_freq - note_freq[0]);
 	for(int j=1;j<6;j++)
-	{
-		float diff=fabsf(detected_freq - note_freq[j]);
+	{ for (int h=1; h<8; h++){ //checking upto 8 harmonics of that note
+		float harmonic = note_freq[j] *h;
+		if (harmonic >1300.00f) break;  //dont check harmonics after 1.3kHz
+		float diff=fabsf(detected_freq - harmonic);
 		if(diff<min_diff)
 		{
 			min_diff=diff;
 			closest=j;
+			closest_harmonic = harmonic; //closest harmonic to the detected frequency
 		}
+	  }
 	}
 
-	float freq_diff = detected_freq - note_freq[closest];
+	float freq_diff = detected_freq - closest_harmonic;
 
 	const char *direction;
 	if (fabsf(min_diff) < 0.5f)
@@ -317,7 +323,7 @@ void process_buffer(void)
 	   direction = "Lower";
 	char line1[20];
 	char line2[20];
-	snprintf(line1, sizeof(line1), "Note:%s F:%.0fHz", notes[closest], detected_freq);
+	snprintf(line1, sizeof(line1), "Note:%s F:%.0fHz", note_freq[closest] , detected_freq);
 
 	  if (fabsf(min_diff) < 0.5f)
 	        snprintf(line2, sizeof(line2), "Diff:+/-%.1fHz", fabsf(freq_diff));
