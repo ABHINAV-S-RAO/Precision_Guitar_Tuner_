@@ -1,5 +1,4 @@
-# Precision_Guitar_Tuner
-#  STM32 Guitar Tuner (FFT-Based)
+# Precision_Guitar_Tuner using STM32
 
 This project is a **fully register-level** STM32 Guitar Tuner, **featuring hand-written LCD & GPIO drivers**, and an analog front-end using a 4-pole Butterworth LPF and level shifting stage to safely sample the Electric guitar signals. Frequency detection is performed via CMSIS-DSP’s fast FFT pipeline to determine the played note in real time.
 <p align="center">
