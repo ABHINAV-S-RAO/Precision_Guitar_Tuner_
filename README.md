@@ -2,7 +2,9 @@
 #  STM32 Guitar Tuner (FFT-Based)
 
 This project is a **fully register-level** STM32 Guitar Tuner, **featuring hand-written LCD & GPIO drivers**, and an analog front-end using a 4-pole Butterworth LPF and level shifting stage to safely sample the Electric guitar signals. Frequency detection is performed via CMSIS-DSP’s fast FFT pipeline to determine the played note in real time.
-![WhatsApp Image 2025-11-09 at 15 13 05_bf6d7481](https://github.com/user-attachments/assets/01630834-6565-4276-9bb9-1619b33940d3)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/01630834-6565-4276-9bb9-1619b33940d3" width="250" style="border-radius:12px;">
+</p>
 
 ---
 
@@ -23,13 +25,13 @@ This project is a **fully register-level** STM32 Guitar Tuner, **featuring hand-
 ##  System Overview
 [Electric Guitar Jack]
 │
-▼
+>
 [ ADC (PA0) ] ← Triggered by Timer2 TRGO @ 8 kHz
 │
-▼
+>
 [ FFT Processing using CMSIS DSP ]
 │
-▼
+>
 [ Note Detection + LCD Display ]
 
 
@@ -121,7 +123,11 @@ This project is a **fully register-level** STM32 Guitar Tuner, **featuring hand-
 - The closest note and tuning status are shown on the LCD.
 
 
-https://github.com/user-attachments/assets/09bb81d4-c76f-45c5-a8a2-ff6248709606
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/09bb81d4-c76f-45c5-a8a2-ff6248709606" width="350" controls>
+  </video>
+</p>
+
 
 
 ---
@@ -129,17 +135,20 @@ https://github.com/user-attachments/assets/09bb81d4-c76f-45c5-a8a2-ff6248709606
 ## **Example LCD Output**
 *Note: A2  F:110Hz*
 *Diff:+0.4Hz HIGH*
-![WhatsApp Image 2025-11-09 at 15 20 03_aa332869](https://github.com/user-attachments/assets/0b4526ac-7d03-4009-8ae6-fa54c06ac23e)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0b4526ac-7d03-4009-8ae6-fa54c06ac23e" width="250">
+</p>
+
 
 ---
 
 ## **Debug Mode (Software Test)**
 
 You can test the FFT without hardware by generating a sine wave:
-
-*fill_adc_buffer_with_sine(246.94f, 0.5f, 8000.0f); // Simulate B3*
-*process_buffer();*
-
+```c
+fill_adc_buffer_with_sine(246.94f, 0.5f, 8000.0f); // Simulate B3
+process_buffer();
+```
 ---
 
 ## **Future Improvements**
