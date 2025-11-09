@@ -85,17 +85,19 @@ This project is a **fully register-level** STM32 Guitar Tuner, **featuring hand-
    windowed_buffer[i] = adc_buffer[i] * (0.5f - 0.5f * cosf(2 * PI * i / (BUFFER_SIZE - 1)));
 
 2. **Perform FFT**
+   ```c
    arm_rfft_fast_init_f32(&fft_inst, BUFFER_SIZE);
    arm_rfft_fast_f32(&fft_inst, windowed_buffer, fft_real, 0);
+   ```
 
-
-3. **Find Peak Magnitude**
+4. **Find Peak Magnitude**
    The bin with maximum magnitude corresponds to the dominant frequency.
    
-4. **Calculate frequency:**
+5. **Calculate frequency:**
+   ```c
    detected_freq = peak_index * (SAMPLING_RATE / BUFFER_SIZE);
-
-5. **Compare with Guitar Notes:**
+   ```
+6. **Compare with Guitar Notes:**
    Finds the closest frequency and determines if the string is HIGH, LOW, or IN TUNE.
 
 ---
