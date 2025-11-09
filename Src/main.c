@@ -1,17 +1,20 @@
-#include "stm32f446xx.h"
-#include "lcd.h"
+#include "stm32f446xx.h" //CMSIS device header for register definitions 
+#include "lcd.h" //Custom LCD driver :)
 #include <math.h>
 #include "arm_math.h"
 #include <stdio.h>
-#include "stm32f446xx_gpio_driver.h"
+#include "stm32f446xx_gpio_driver.h" //My custom GPIO_Driver (not HAL)
 #include <stdint.h>
 
 #define ENABLE 	1
 //macrodefinitions
-#define ADC_CHANNEL		0//A0 pin
+#define ADC_CHANNEL		0   //A0 pin
 #define BUFFER_SIZE		1024
 #define SAMPLING_RATE	8000 //sampling frequency in hertz
 #define APB1CLK			48000000
+#define ADC_CR2_SWSTART  (1U << 30)  // SWSTART bit in ADC_CR2 (STM32F4)
+#define ADC_SR_EOC       (1U << 1)
+
 //PC13 is the button to configure interrupt
 
 
@@ -82,9 +85,10 @@ void TIM2_Init()
 
 	//2.Configure prescalar and auto-reload for desired Sample Rate
 
-	//Eg: 16KHz : timer freq= 45Mhz /(PSCC+1)/(ARR+1) ~ 8kHz
+	//Eg: 16KHz : timer freq= 90Mhz /(PSCC+1)/(ARR+1) ~ 8kHz  
+	//Tim2 runs at 90Mhz even tho its connected to APB1 which runs at 45Mhz(prescaled from 90)
 
-	TIM2->PSC=2;//PSC+1=3
+	TIM2->PSC=5;//PSC+1=6 
 	TIM2->ARR=1874;//Auto reload =1874 so that ARR+1=1875
 	TIM2->CR2|=(1U<<5);//MMS=010 to update event as TRGO (trigger output)
 	TIM2->EGR=1;//generate update event immediately
@@ -123,8 +127,6 @@ void ADC_Init()
 	ADC1->CR2 &= ~(3U << 28); // clear EXTEN bits
 	ADC1->CR2 |=  (1U << 28); // set EXTEN = 01 (rising edge)
 
-
-
 }
 
 void Delay_ms(uint32_t milliseconds)
@@ -140,8 +142,6 @@ void Delay_ms(uint32_t milliseconds)
 	TIM3->CR1&=~1;      //stoppin the timer
 	TIM3->SR &=~(1U<<0); //Clearing the flag
 }
-#define ADC_CR2_SWSTART  (1U << 30)    // SWSTART bit in ADC_CR2 (STM32F4)
-#define ADC_SR_EOC       (1U << 1)
 
 void Capture_Samples_swstart(void)
 {
@@ -180,58 +180,56 @@ void Delay_us(uint32_t microseconds)
 void Button_Init(void)
 {
 	// Enable clocks for GPIO A (PA5 LED) and GPIO C (PC13 button)
-		    RCC->AHB1ENR |= (1U << 0);
-		    RCC->AHB1ENR |= (1U << 2);
+	 RCC->AHB1ENR |= (1U << 0);
+	 RCC->AHB1ENR |= (1U << 2);
 
-		    // Set PA5 as LED: output mode, push-pull, low speed
-		    GPIOA->MODER |= (1U << 10);
-		    GPIOA->MODER &= ~(1U << 11);
-		    GPIOA->OTYPER &= ~(1U << 5);
+	 // Set PA5 as LED: output mode, push-pull, low speed
+	GPIOA->MODER |= (1U << 10);
+	GPIOA->MODER &= ~(1U << 11);
+	GPIOA->OTYPER &= ~(1U << 5);
 
-		    // Set PC13 as input with pull-up
-		    GPIOC->MODER &= ~(1U << 26);
-		    GPIOC->MODER &= ~(1U << 27);
-		    GPIOC->OSPEEDR |= (1U << 27);//fast speed
-		    GPIOC->PUPDR |= (1U << 26);//pull-up
-		    GPIOC->PUPDR &= ~(1U << 27);
-
-
-		    // Enable SYSCFG clock
-		    RCC->APB2ENR |= (1U << 14);
-
-		    // Map EXTI13 line to Port C
-		    SYSCFG->EXTICR[3] &= ~(0xF << 4);
-		    SYSCFG->EXTICR[3] |=  (0x2 << 4);// 0x2 = Port C
-
-		    // Unmask EXTI line 13
-		    EXTI->IMR |= (1U << 13);
-
-		    // Configuring falling edge trigger (button press)
-		    EXTI->FTSR |= (1U << 13);
-		    EXTI->RTSR &= ~(1U << 13);//disabling rising edge
+	// Set PC13 as input with pull-up
+	GPIOC->MODER &= ~(1U << 26);
+	GPIOC->MODER &= ~(1U << 27);
+	GPIOC->OSPEEDR |= (1U << 27);//fast speed
+	GPIOC->PUPDR |= (1U << 26);//pull-up
+	GPIOC->PUPDR &= ~(1U << 27);
 
 
-		    //IRQ configurations
+	 // Enable SYSCFG clock
+	RCC->APB2ENR |= (1U << 14);
 
-		    GPIO_IRQPriorityConfig(40, 15);
-		    GPIO_IRQConfig(40,1);
+	// Map EXTI13 line to Port C
+	SYSCFG->EXTICR[3] &= ~(0xF << 4);
+	SYSCFG->EXTICR[3] |=  (0x2 << 4);// 0x2 = Port C
+
+	// Unmask EXTI line 13
+	EXTI->IMR |= (1U << 13);
+
+	// Configuring falling edge trigger (button press)
+	EXTI->FTSR |= (1U << 13);
+	EXTI->RTSR &= ~(1U << 13);//disabling rising edge
+
+
+	//IRQ configurations
+
+	GPIO_IRQPriorityConfig(40, 15);
+	GPIO_IRQConfig(40,1);
 
 }
 int main(void)
 {
-		SCB->CPACR |= (0xF << 20);
-		__DSB();
-		__ISB();
-		Button_Init();//config button+led+exti
-		TIM2_Init();//COnfigure timer(ready to start)
-		ADC_Init();//configure ADC(ready but idle)
-		lcd_init();
+	SCB->CPACR |= (0xF << 20);//CPACR- Coprocessor Access Control Register 
+	__DSB();
+	__ISB();// piece of code to enable the FPU
+	Button_Init();//config button+led+exti
+	TIM2_Init();//COnfigure timer(ready to start)
+	ADC_Init();//configure ADC(ready but idle)
+	lcd_init();
 
-
-
-		while(1)
-		{
-			if(start_sampling)
+	while(1)
+	{
+		if(start_sampling)
 			{
 				//float test_freq = 245.8f;// 50 Hz sine wave
 				//float test_amp = 0.5f;// Max amplitude
@@ -245,8 +243,8 @@ int main(void)
 				start_sampling=0;
 
 			}
-		}
-		return 0;
+	}
+return 0;
 }
 void Capture_Samples(void)
 {
@@ -294,16 +292,23 @@ void process_buffer(void)
 	float detected_freq=(float)peak_index*((float)SAMPLING_RATE/(float)BUFFER_SIZE);
 
 	//Compare with known string frequencies
-
+	int closest =0;
+	float closest_harmonic=0;
 	float min_diff=fabsf(detected_freq - note_freq[0]);
 	for(int j=1;j<6;j++)
-	{
-		float diff=fabsf(detected_freq - note_freq[j]);
-		if(diff<min_diff)
-		{
-			min_diff=diff;
-			closest=j;
-		}
+	{ 
+		for (int h=1; h<8; h++)
+		{ //checking upto 8 harmonics of that note
+			float harmonic = note_freq[j] *h;
+			if (harmonic >1300.00f) break;  //dont check harmonics after 1.3kHz
+			float diff=fabsf(detected_freq - harmonic);
+			if(diff<min_diff)
+			{
+				min_diff=diff;
+				closest=j;
+				closest_harmonic = harmonic; //closest harmonic to the detected frequency
+			}
+	  	}
 	}
 
 	float freq_diff = detected_freq - note_freq[closest];
@@ -324,17 +329,17 @@ void process_buffer(void)
 	  else
 	        snprintf(line2, sizeof(line2), "Diff:%.1fHz %s", fabsf(freq_diff), (freq_diff > 0) ? "HIGH" : "LOW");
 
-	    //Display on LCD
-	    lcd_display_clear();
-	    lcd_send_command(0x28);
-	    Delay_us(50);
-	    lcd_set_cursor(1,1);
-	    Delay_us(50);
-	    lcd_print_string(line1);
+	//Displaying on LCD
+	lcd_display_clear();
+	lcd_send_command(0x28);
+	Delay_us(50);
+	lcd_set_cursor(1,1);
+	Delay_us(50);
+	lcd_print_string(line1);
 
-	    lcd_set_cursor(2,1);
-	    Delay_us(50);
-	    lcd_print_string(line2);
+	lcd_set_cursor(2,1);
+	Delay_us(50);
+	lcd_print_string(line2);
 
 }
 
@@ -342,7 +347,7 @@ void process_buffer(void)
 void Start_Conversion(void)
 {
     sample_index = 0;
-    // Enabling ADC and Timer2 in sync
+    //Enabling ADC and Timer2 in sync
     ADC1->CR2 |= (1U << 0);//ADC ON
     Delay_us(100);
     TIM2->CR1 |= (1U << 0);//Start timer counter
